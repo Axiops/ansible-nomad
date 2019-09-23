@@ -5,7 +5,7 @@
 nomad_debug: false
 
 ### Package
-nomad_version: "{{ lookup('env','NOMAD_VERSION') | default('0.9.5', true) }}"
+nomad_version: "{{ lookup('env','NOMAD_VERSION') | default('0.10.0-beta1', true) }}"
 nomad_architecture_map:
   amd64: amd64
   x86_64: amd64
@@ -14,9 +14,9 @@ nomad_architecture_map:
   32-bit: "386"
   64-bit: amd64
 nomad_architecture: "{{ nomad_architecture_map[ansible_architecture] }}"
-nomad_pkg: "nomad_{{ nomad_version }}_linux_{{nomad_architecture}}.zip"
-nomad_zip_url: "https://releases.hashicorp.com/nomad/{{ nomad_version }}/nomad_{{ nomad_version }}_linux_{{nomad_architecture}}.zip"
-nomad_checksum_file_url: "https://releases.hashicorp.com/nomad/{{ nomad_version }}/nomad_{{ nomad_version}}_SHA256SUMS"
+nomad_pkg: "nomad_{{ nomad_version }}_linux_{{ nomad_architecture }}.zip"
+nomad_zip_url: "https://releases.hashicorp.com/nomad/{{ nomad_version }}/nomad_{{ nomad_version }}_linux_{{ nomad_architecture }}.zip"
+nomad_checksum_file_url: "https://releases.hashicorp.com/nomad/{{ nomad_version }}/nomad_{{ nomad_version }}_SHA256SUMS"
 
 ### Paths
 nomad_bin_dir: "/usr/local/bin"
@@ -68,6 +68,8 @@ nomad_gc_interval: "1m"
 nomad_gc_disk_usage_threshold: 80
 nomad_gc_inode_usage_threshold: 70
 nomad_gc_parallel_destroys: 2
+nomad_host_volumes: []
+nomad_host_volumes_base_path: "{{ nomad_data_dir }}/client/host_volumes"
 nomad_reserved:
   cpu: "{{ nomad_reserved_cpu | default('0', true) }}"
   memory: "{{ nomad_reserved_memory | default('0', true) }}"
@@ -91,7 +93,7 @@ nomad_ports:
 ### Servers
 nomad_group_name: "nomad_instances"
 nomad_servers: "\
-  {% if nomad_use_consul==false %}\
+  {% if nomad_use_consul | bool %}\
     {% set _nomad_servers = [] %}\
     {% for host in groups[nomad_group_name] %}\
       {% set _nomad_node_role = hostvars[host]['nomad_node_role'] | default('client', true) %}\
@@ -137,9 +139,14 @@ nomad_vault_token: ""
 nomad_docker_enable: "{{ lookup('env','NOMAD_DOCKER_ENABLE') | default('false', true) }}"
 nomad_docker_dmsetup: true
 
-### Tls
+### TLS
 nomad_ca_file: ""
 nomad_cert_file: ""
 nomad_key_file: ""
 nomad_verify_server_hostname: true
 nomad_verify_https_client: true
+
+### CNI plugins
+nomad_cni_plugins_version: '0.8.1'
+nomad_cni_plugins_archive_url: 'https://github.com/containernetworking/plugins/releases/download/v{{ nomad_cni_plugins_version }}/cni-plugins-linux-{{ nomad_architecture }}-v{{ nomad_cni_plugins_version }}.tgz'
+nomad_cni_plugins_dir: '/opt/cni/bin'

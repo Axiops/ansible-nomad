@@ -1,0 +1,12 @@
+---
+
+- name: 'Create CNI plugins directory'
+  file:
+    path: '{{ nomad_cni_plugins_dir }}'
+    state: 'directory'
+
+- name: 'Download CNI plugins archive'
+  unarchive:
+    dest: '{{ nomad_cni_plugins_dir }}'
+    remote_src: true
+    src: '{{ nomad_cni_plugins_archive_url }}'

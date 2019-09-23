@@ -25,6 +25,13 @@ client {
     gc_inode_usage_threshold = {{ nomad_gc_inode_usage_threshold }}
     gc_parallel_destroys = {{ nomad_gc_parallel_destroys }}
 
+    {% for volume in nomad_host_volumes -%}
+    host_volume "{{ volume.name }}" {
+      path      = "{{ volume.path | default(nomad_host_volumes_base_path + '/' + volume.name) }}"
+      read_only = {{ volume.read_only | default("false", true) }}
+    }
+
+    {% endfor -%}
     reserved {
         cpu = {{ nomad_reserved['cpu'] }}
         memory = {{ nomad_reserved['memory'] }}

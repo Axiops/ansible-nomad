@@ -1,5 +1,13 @@
 ---
-# File: main.yml handlers file for nomad
 
-- name: restart nomad
-  service: name=nomad state=restarted
+- name: 'Reload Nomad'
+  service:
+    name: 'nomad'
+    state: 'reloaded'
+
+- name: 'Restart Nomad'
+  service:
+    name: 'nomad'
+    state: 'restarted'
+
+# vim: set ft=yaml.ansible ts=2 sw=2 tw=0 et :
